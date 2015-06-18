@@ -1,4 +1,4 @@
-# Autocompletion for homebrew-cask.
+# Autocompletion for homebrew-services.
 #
 # This script intercepts calls to the brew plugin and adds autocompletion
 # for the services subcommand.
@@ -20,7 +20,7 @@ _brew-services()
 
   case $state in
     (command)
-      __call_original_brew
+      __call_brew_cask_or_brew_original
       services_commands=(
         'services:manage launchctl services'
       )
@@ -42,7 +42,7 @@ _brew-services()
           fi ;;
 
         *)
-          __call_original_brew ;;
+          __call_brew_cask_or_brew_original ;;
       esac ;;
 
     (options)
@@ -67,9 +67,9 @@ __brew_started_services() {
   started_services=(`brew services list 2>/dev/null | awk '{print $1}'`)
 }
 
-__call_original_brew()
+__call_brew_cask_or_brew_original()
 {
   local ret=1
-  _call_function ret _brew
+  type _brew-cask &>/dev/null && _call_function ret _brew-cask || _call_function ret _brew
   compdef _brew-services brew
 }
